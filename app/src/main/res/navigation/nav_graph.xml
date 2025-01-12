@@ -1,0 +1,28 @@
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    app:startDestination="@id/userListFragment">
+
+    <fragment
+        android:id="@+id/userListFragment"
+        android:name="com.example.userslistassessment.ui.userlist.UserListFragment"
+        android:label="User List"
+        tools:layout="@layout/fragment_user_list"> <!-- tools:layout used here -->
+        <action
+            android:id="@+id/action_userListFragment_to_userDetailFragment"
+            app:destination="@id/userDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/userDetailFragment"
+        android:name="com.example.userslistassessment.ui.userlist.UserDetailFragment"
+        android:label="User Detail"
+        tools:layout="@layout/fragment_user_detail"> <!-- tools:layout used here -->
+        <argument
+            android:name="userName"
+            app:argType="string" />
+        <argument
+            android:name="userEmail"
+            app:argType="string" />
+    </fragment>
+</navigation>
