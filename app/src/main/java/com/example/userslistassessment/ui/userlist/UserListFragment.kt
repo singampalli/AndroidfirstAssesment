@@ -35,9 +35,9 @@ class UserListFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(requireContext())
 
         userAdapter = UserAdapter(users) { user ->
-//            val action = UserListFragmentDirections
-//                .actionUserListFragmentToUserDetailFragment(user.name, user.email)
-//            findNavController().navigate(action)
+            val action = UserListFragmentDirections
+                .actionUserListFragmentToUserDetailFragment(user.name, user.email, user.username)
+            findNavController().navigate(action)
         }
         recyclerView.adapter = userAdapter
 
