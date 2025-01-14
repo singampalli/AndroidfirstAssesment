@@ -25,6 +25,7 @@ class UserListFragment : Fragment() {
     private var currentPage = 1
     private val pageSize = 7
     private var isLoading = false
+    private var isInitialized = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,7 +46,18 @@ class UserListFragment : Fragment() {
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                if (!recyclerView.canScrollVertically(1) && !isLoading) {
+
+                // Ensure listener doesn't trigger during initialization
+                if (!isInitialized) {
+                    isInitialized = true
+                    return
+                }
+
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
+                val totalItemCount = layoutManager.itemCount
+                val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
+
+                if (!isLoading && lastVisibleItem >= totalItemCount - 1) {
                     loadMoreUsers()
                 }
             }
@@ -57,7 +69,8 @@ class UserListFragment : Fragment() {
 
     private fun loadMoreUsers() {
         isLoading = true
-        ApiClient.apiService.getUsers(currentPage, pageSize).enqueue(object : Callback<List<User>> {
+        val start = (currentPage - 1) * pageSize
+        ApiClient.apiService.getUsers(start, pageSize).enqueue(object : Callback<List<User>> {
             override fun onResponse(call: Call<List<User>>, response: Response<List<User>>) {
                 if (response.isSuccessful) {
                     Log.d("API", "URL: ${call.request().url}")
@@ -66,12 +79,14 @@ class UserListFragment : Fragment() {
                     userAdapter.notifyDataSetChanged()
                     currentPage++
                 } else {
+                    Log.d("API", "In else URL: ${call.request().url}")
                     Toast.makeText(requireContext(), "Failed to load users", Toast.LENGTH_SHORT).show()
                 }
                 isLoading = false
             }
 
             override fun onFailure(call: Call<List<User>>, t: Throwable) {
+                Log.d("API", "in failure URL: ${call.request().url} ${t.message}")
                 Toast.makeText(requireContext(), "Failed to load users", Toast.LENGTH_SHORT).show()
                 isLoading = false
             }

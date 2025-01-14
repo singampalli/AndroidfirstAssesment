@@ -8,6 +8,6 @@ import retrofit2.http.Query
 interface ApiService {
     // Define an endpoint with pagination parameters
     @GET("users")
-    fun getUsers(@Query("page") page: Int, @Query("size") size: Int): Call<List<User>>
+    fun getUsers(@Query("_start") page: Int, @Query("_limit") size: Int): Call<List<User>>
 
 }
